@@ -1,53 +1,156 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import React, { useState } from 'react';
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+// Sample data for table and line graph
+const sampleData = [
+  { name: 'Point 1', value: 10 },
+  { name: 'Point 2', value: 30 },
+  { name: 'Point 3', value: 20 },
+];
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
-  }
+const App = () => {
+  const [folderContent, setFolderContent] = useState([]);
+  const [consoleOutput, setConsoleOutput] = useState('Console output will appear here.');
+  const [selectedPoint, setSelectedPoint] = useState(null);  // State to track selected data point
+
+  // Function to handle folder selection
+  const handleFolderSelect = (event) => {
+    const files = event.target.files;
+    const folderData = [];
+    for (let i = 0; i < files.length; i++) {
+      folderData.push(files[i].name);
+    }
+    setFolderContent(folderData);
+  };
+
+  // Handle Start and Restart buttons
+  const handleStart = () => setConsoleOutput('Start clicked');
+  const handleRestart = () => setConsoleOutput('Restart clicked');
+
+  // Handle dot click (select a data point)
+  const handleDotClick = (point) => {
+    setSelectedPoint(point);  // Update selected point
+  };
 
   return (
-    <div className="container">
-      <h1>Welcome to Tauri!</h1>
+    <div style={{ display: 'flex', height: '100vh' }}>
+      {/* Left Section */}
+      <div style={{ width: '50%', padding: '20px' }}>
+        {/* Table with Line Graph */}
+        <div>
+          <table border="1" style={{ width: '100%' }}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sampleData.map((data, index) => (
+                <tr key={index}>
+                  <td>{data.name}</td>
+                  <td>{data.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+          {/* Line Graph with Dots */}
+          <div style={{ marginTop: '20px' }}>
+            <svg width="100%" height="100">
+              {/* Line */}
+              <polyline
+                fill="none"
+                stroke="white"
+                strokeWidth="3"
+                points={sampleData.map((data, index) => `${index * 100},${100 - data.value}`).join(' ')}
+              />
+              {/* Dots on the Line Graph */}
+              {sampleData.map((data, index) => (
+                <circle
+                  key={index}
+                  cx={index * 100}  // Positioning x based on index
+                  cy={100 - data.value}  // Positioning y based on value
+                  r="5"
+                  fill={selectedPoint === data ? 'red' : 'white'}  /* Selected point in red */
+                  stroke="black"
+                  strokeWidth="1"
+                  cursor="pointer"
+                  onClick={() => handleDotClick(data)}  // Handle dot click
+                />
+              ))}
+            </svg>
+          </div>
+        </div>
+
+        {/* Rectangle with Text - Display Selected Data */}
+        <div
+          style={{
+            backgroundColor: '#000000',
+            marginTop: '20px',
+            padding: '10px',
+            height: '100px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            border: '1px solid white',
+          }}
+        >
+          <span>
+            {selectedPoint ? `Selected: ${selectedPoint.name} - Value: ${selectedPoint.value}` : 'No data point selected'}
+          </span>
+        </div>
+
+        {/* Load Model Button */}
+        <button style={{ marginTop: '10px' }}>Load Model</button>
       </div>
 
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
+      {/* Right Section */}
+      <div style={{ width: '50%', padding: '20px' }}>
+        {/* Folder Selection Box */}
+        <div>
+          <input type="file" webkitdirectory="true" onChange={handleFolderSelect} />
+        </div>
 
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
+        {/* Display Folder Contents */}
+        <div style={{ marginTop: '20px', height: '150px', overflowY: 'scroll', border: '1px solid white', backgroundColor: ' black' }}>
+          <ul>
+            {folderContent.map((file, index) => (
+              <li key={index}>{file}</li>
+            ))}
+          </ul>
+        </div>
 
-      <p>{greetMsg}</p>
+        {/* New and Load Buttons */}
+        <div style={{ marginTop: '20px' }}>
+          <button>New</button>
+          <button style={{ marginLeft: '10px' }}>Load</button>
+        </div>
+      </div>
+
+      {/* Bottom Console Section */}
+      <div style={{ width: '100%', position: 'absolute', bottom: '0', textAlign: 'center' }}>
+        <div
+          style={{
+            margin: '20px auto',
+            width: '55%',
+            height: '200px',
+            border: '1px solid white',
+            padding: '10px',
+            overflowY: 'scroll',
+            color: 'white',
+            backgroundColor: 'black',
+          }}
+        >
+          {consoleOutput}
+        </div>
+        <button onClick={handleRestart} style={{ marginRight: '10px' }}>
+          Restart
+        </button>
+        <button onClick={handleStart}>Start</button>
+      </div>
     </div>
   );
-}
+};
 
 export default App;
