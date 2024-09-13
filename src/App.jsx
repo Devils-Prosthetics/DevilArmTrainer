@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { listen } from '@tauri-apps/api/event';
+import { invoke } from '@tauri-apps/api/core';
 
 // Sample data for table and line graph
 const sampleData = [
@@ -6,7 +8,14 @@ const sampleData = [
   { name: 'Point 2', value: 30 },
   { name: 'Point 3', value: 20 },
   { name: 'Point 4', value: 80 },
+  { name: 'Point 5', value: 70 }
 ];
+
+listen('download-started', (event) => {
+  console.log(
+    `downloading ${event.payload.contentLength} bytes from ${event.payload.url}`
+  );
+});
 
 const App = () => {
   const [folderContent, setFolderContent] = useState([]);
@@ -24,7 +33,11 @@ const App = () => {
   };
 
   // Handle Start and Restart buttons
-  const handleStart = () => setConsoleOutput('Start clicked');
+  const handleStart = async () => {
+    setConsoleOutput('Start clicked');
+    const response = await invoke('serial_start', { port: '/dev/ttyUSB0'} );
+    console.log('response:', response);
+  };
   const handleRestart = () => setConsoleOutput('Restart clicked');
 
   // Handle dot click (select a data point)
@@ -38,26 +51,30 @@ const App = () => {
       <div style={{ width: '50%', padding: '20px' }}>
         {/* Table with Line Graph */}
         <div>
-          <table border="1" style={{ width: '100%' }}>
+            <table border="1" style={{ width: '100%' }}>
             <thead>
               <tr>
                 <th>Name</th>
                 <th>Value</th>
               </tr>
             </thead>
-            <tbody>
-              {sampleData.map((data, index) => (
-                <tr key={index}>
-                  <td>{data.name}</td>
-                  <td>{data.value}</td>
-                </tr>
-              ))}
-            </tbody>
           </table>
+          <div style={{ maxHeight: '120px', overflowY: 'auto' }}>
+            <table border="1" style={{ width: '100%' }}>
+              <tbody>
+                {sampleData.map((data, index) => (
+                  <tr key={index}>
+                    <td>{data.name}</td>
+                    <td>{data.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {/* Line Graph with Dots */}
           <div style={{ marginTop: '20px' }}>
-            <svg width="100%" height="120">
+            <svg width="100%" height="100">
               {/* Line */}
               <polyline
                 fill="none"
@@ -108,7 +125,7 @@ const App = () => {
       </div>
 
       {/* Right Section */}
-      <div style={{ width: '50%', paddingRight: '20px' }}>
+      <div style={{ width: '50%', padding: '0px' }}>
 
         {/* Display Folder Contents */}
         <div style={{ marginTop: '20px', height: '150px', overflowY: 'scroll', border: '1px solid black', backgroundColor: '#565656' }}>
@@ -126,27 +143,28 @@ const App = () => {
           {/* Folder Selection Box */}
           <input type="file" webkitdirectory="true" onChange={handleFolderSelect} />
         </div>
-        {/* Bottom Console Section */}
-        <div style={{ width: '100%', bottom: '0', textAlign: 'center' }}>
-          <div
-            style={{
-              margin: '20px auto',
-              width: '95%',
-              height: '200px',
-              border: '1px solid black',
-              padding: '10px',
-              overflowY: 'scroll',
-              color: 'white',
-              backgroundColor: '#565656',
-            }}
-          >
-            {consoleOutput}
-          </div>
-          <button onClick={handleRestart} style={{ marginRight: '10px' }}>
-            Restart
-          </button>
-          <button onClick={handleStart}>Start</button>
+      </div>
+
+      {/* Bottom Console Section */}
+      <div style={{ width: '100%', position: 'absolute', bottom: '30px', textAlign: 'center' }}>
+        <div
+          style={{
+            margin: '20px auto',
+            width: '95%',
+            height: '200px',
+            border: '1px solid black',
+            padding: '10px',
+            overflowY: 'scroll',
+            color: 'white',
+            backgroundColor: '#565656',
+          }}
+        >
+          {consoleOutput}
         </div>
+        <button onClick={handleRestart} style={{ marginRight: '10px' }}>
+          Restart
+        </button>
+        <button onClick={handleStart}>Start</button>
       </div>
     </div>
   );

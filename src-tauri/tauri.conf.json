@@ -12,8 +12,8 @@
     "windows": [
       {
         "title": "devilarmtrainer",
-        "width": 1024,
-        "height": 768,
+        "width": 1080,
+        "height": 850,
         "resizable": true,
         "fullscreen": false, 
         "minWidth": 800,
