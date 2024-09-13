@@ -5,6 +5,7 @@ const sampleData = [
   { name: 'Point 1', value: 10 },
   { name: 'Point 2', value: 30 },
   { name: 'Point 3', value: 20 },
+  { name: 'Point 4', value: 80 },
 ];
 
 const App = () => {
@@ -56,7 +57,7 @@ const App = () => {
 
           {/* Line Graph with Dots */}
           <div style={{ marginTop: '20px' }}>
-            <svg width="100%" height="100">
+            <svg width="100%" height="120">
               {/* Line */}
               <polyline
                 fill="none"
@@ -93,7 +94,8 @@ const App = () => {
             alignItems: 'center',
             justifyContent: 'center',
             color: 'white',
-            border: '1px solid white',
+            border: '1px solid black',
+            backgroundColor: '#565656'
           }}
         >
           <span>
@@ -102,18 +104,14 @@ const App = () => {
         </div>
 
         {/* Load Model Button */}
-        <button style={{ marginTop: '10px' }}>Load Model</button>
+        <button style={{ marginTop: '20px' }}>Load Model</button>
       </div>
 
       {/* Right Section */}
-      <div style={{ width: '50%', padding: '20px' }}>
-        {/* Folder Selection Box */}
-        <div>
-          <input type="file" webkitdirectory="true" onChange={handleFolderSelect} />
-        </div>
+      <div style={{ width: '50%', paddingRight: '20px' }}>
 
         {/* Display Folder Contents */}
-        <div style={{ marginTop: '20px', height: '150px', overflowY: 'scroll', border: '1px solid white', backgroundColor: ' black' }}>
+        <div style={{ marginTop: '20px', height: '150px', overflowY: 'scroll', border: '1px solid black', backgroundColor: '#565656' }}>
           <ul>
             {folderContent.map((file, index) => (
               <li key={index}>{file}</li>
@@ -125,29 +123,30 @@ const App = () => {
         <div style={{ marginTop: '20px' }}>
           <button>New</button>
           <button style={{ marginLeft: '10px' }}>Load</button>
+          {/* Folder Selection Box */}
+          <input type="file" webkitdirectory="true" onChange={handleFolderSelect} />
         </div>
-      </div>
-
-      {/* Bottom Console Section */}
-      <div style={{ width: '100%', position: 'absolute', bottom: '0', textAlign: 'center' }}>
-        <div
-          style={{
-            margin: '20px auto',
-            width: '55%',
-            height: '200px',
-            border: '1px solid white',
-            padding: '10px',
-            overflowY: 'scroll',
-            color: 'white',
-            backgroundColor: 'black',
-          }}
-        >
-          {consoleOutput}
+        {/* Bottom Console Section */}
+        <div style={{ width: '100%', bottom: '0', textAlign: 'center' }}>
+          <div
+            style={{
+              margin: '20px auto',
+              width: '95%',
+              height: '200px',
+              border: '1px solid black',
+              padding: '10px',
+              overflowY: 'scroll',
+              color: 'white',
+              backgroundColor: '#565656',
+            }}
+          >
+            {consoleOutput}
+          </div>
+          <button onClick={handleRestart} style={{ marginRight: '10px' }}>
+            Restart
+          </button>
+          <button onClick={handleStart}>Start</button>
         </div>
-        <button onClick={handleRestart} style={{ marginRight: '10px' }}>
-          Restart
-        </button>
-        <button onClick={handleStart}>Start</button>
       </div>
     </div>
   );
