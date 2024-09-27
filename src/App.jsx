@@ -33,11 +33,18 @@ const App = () => {
   };
 
   // Handle Start and Restart buttons
+  // Handle Start button
   const handleStart = async () => {
-    setConsoleOutput('Start clicked');
-    const response = await invoke('serial_start', { port: '/dev/ttyUSB0'} );
-    console.log('response:', response);
+    setConsoleOutput('Starting serial port connection...');
+    try {
+      const response = await invoke('serial_start', { port: '/dev/ttyUSB0' });
+      setConsoleOutput(response);
+    } catch (error) {
+      setConsoleOutput(`Error: ${error}`);
+    }
   };
+
+  // Handle Restart button (no backend call, just resets the console)
   const handleRestart = () => setConsoleOutput('Restart clicked');
 
   // Handle dot click (select a data point)

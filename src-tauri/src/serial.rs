@@ -24,6 +24,7 @@ pub fn start(port: &str) -> bool {
     let port = serialport::new("/dev/ttyUSB0", 115_200)
         .timeout(Duration::from_millis(10))
         .open();
+        
     let mut port = match port {
         Ok(port) => port,
         Err(err) => {
@@ -31,12 +32,24 @@ pub fn start(port: &str) -> bool {
             return false;
         },
     };
+
     let mut serial_buf: Vec<u8> = vec![0; 32];
-    port.read(serial_buf.as_mut_slice()).expect("Found no data!");
 
-    true
+    loop {
+        match port.read(serial_buf.as_mut_slice()) {
+            Ok(_) => {
+                // Process the data here
+                println!("Received data: {:?}", serial_buf);
+            },
+            Err(err) => {
+                println!("Error reading from port: {:?}", err);
+            }
+        }
+
+        // Optionally sleep to prevent constant polling if needed
+        std::thread::sleep(Duration::from_millis(10));
+    }
 }
-
 pub fn stop() -> bool {
     true
 }
