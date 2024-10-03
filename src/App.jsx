@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
+import myImage from '../src/assets/DPP2.png';
 
 // Sample data for table and line graph
 const sampleData = [
@@ -37,7 +38,7 @@ const App = () => {
   const handleStart = async () => {
     setConsoleOutput('Starting serial port connection...');
     try {
-      const response = await invoke('serial_start', { port: '/dev/ttyUSB0' });
+      const response = await invoke('serial_start', { port: '/dev/ttyACM0' });
       setConsoleOutput(response);
     } catch (error) {
       setConsoleOutput(`Error: ${error}`);
@@ -149,6 +150,10 @@ const App = () => {
           <button style={{ marginLeft: '10px' }}>Load</button>
           {/* Folder Selection Box */}
           <input type="file" webkitdirectory="true" onChange={handleFolderSelect} />
+        </div>
+        <div className="logo">
+          <img src={myImage} width="275" height="275" marginRight="40" style={{ marginLeft: '90px' }} // Adjust the margin for spacing
+          />
         </div>
       </div>
 
