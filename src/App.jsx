@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 import myImage from '../src/assets/DPP2.png';
+
 
 // Sample data for table and line graph
 const sampleData = [
@@ -32,6 +33,16 @@ const App = () => {
     }
     setFolderContent(folderData);
   };
+
+  useEffect(() => {
+    const unlisten = listen('serial-data', (event) => {
+      setConsoleOutput((prev) => `${prev}\n${event.payload}`);
+    });
+
+    return () => {
+      unlisten.then((fn) => fn());
+    };
+  }, []);
 
   // Handle Start and Restart buttons
   // Handle Start button

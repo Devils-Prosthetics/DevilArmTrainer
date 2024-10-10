@@ -2,6 +2,9 @@ use std::time::Duration;
 
 use anyhow::Result;
 use serialport::SerialPort;
+use tauri::{http::response, Emitter};
+
+use crate::GLOBAL_APP_HANDLE;
 
 struct Serial {
     port: Box<dyn SerialPort>
@@ -33,13 +36,17 @@ pub fn start(port: &str) -> bool {
         },
     };
 
-    let mut serial_buf: Vec<u8> = vec![0; 32];
 
     loop {
+        let mut serial_buf: Vec<u8> = vec![0; 32];
+
         match port.read(serial_buf.as_mut_slice()) {
             Ok(_) => {
                 // Process the data here
-                println!("Received data: {:?}", serial_buf);
+                if let Ok(data) = String::from_utf8(serial_buf) {
+                    let response = GLOBAL_APP_HANDLE.get().unwrap().emit("serial-data", data);
+                    println!("{:?}", response);
+                }
             },
             Err(err) => {
                 println!("Error reading from port: {:?}", err);
