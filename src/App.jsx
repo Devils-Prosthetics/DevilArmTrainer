@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 import myImage from '../src/assets/DPP2.png';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 
 // Sample data for table and line graph
@@ -63,6 +65,41 @@ const App = () => {
   const handleDotClick = (point) => {
     setSelectedPoint(point);  // Update selected point
   };
+
+  const handleFileUpload = async () => {
+    const file = document.querySelector('input[type="file"]').files[0];
+    
+    if (file) {
+      //setConsoleOutput('in file1');
+        const reader = new FileReader();
+        
+        reader.onload = async () => {
+          try{
+            const fileContent = reader.result;
+
+            // Call the Rust backend to upload the file
+            const response = await invoke('upload_file_to_pi');
+            // Not being called!??!
+            
+            console.log(response);
+          } catch (error) {
+              console.error(`Error: ${error}`);
+              notify(`Error: ${error}`);
+              setConsoleOutput(`Error: ${error}`);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+    } else {
+      notify("No File Selected!");
+    }
+  };  
+
+  const notify = (str) => toast(str);
+
+  const runBoth = () => {
+    handleFileUpload();
+    notify();
+  }
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
@@ -157,10 +194,11 @@ const App = () => {
 
         {/* New and Load Buttons */}
         <div style={{ marginTop: '20px' }}>
-          <button>New</button>
-          <button style={{ marginLeft: '10px' }}>Load</button>
           {/* Folder Selection Box */}
+          <button onClick={runBoth}>Upload to Raspberry Pi</button>
+          <ToastContainer />
           <input type="file" webkitdirectory="true" onChange={handleFolderSelect} />
+            
         </div>
         <div className="logo">
           <img src={myImage} width="275" height="275" marginRight="40" style={{ marginLeft: '90px' }} // Adjust the margin for spacing
@@ -180,9 +218,12 @@ const App = () => {
             overflowY: 'scroll',
             color: 'white',
             backgroundColor: '#565656',
+            textAlign: 'left'
           }}
         >
-          {consoleOutput}
+          {consoleOutput.split('\n').map((line, index) => {
+            return (<span key={index}>{line}</span>)
+          })}
         </div>
         <button onClick={handleRestart} style={{ marginRight: '10px' }}>
           Restart
