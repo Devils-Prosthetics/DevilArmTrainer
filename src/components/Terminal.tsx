@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
+import { useEffect, useState } from "react";
 
 export const Terminal = () => {
 	const [consoleOutput, setConsoleOutput] = useState('Console output will appear here.');
@@ -8,7 +10,7 @@ export const Terminal = () => {
 	const handleStart = async () => {
 		setConsoleOutput('Starting serial port connection...');
 		try {
-			const response = await invoke('serial_start', { port: '/dev/ttyACM0' });
+			const response = await invoke('serial_start', { port: '/dev/ttyACM0' }) as string;
 			setConsoleOutput(response);
 		} catch (error) {
 			setConsoleOutput(`Error: ${error}`);
@@ -17,6 +19,16 @@ export const Terminal = () => {
 
 	// Handle Restart button (no backend call, just resets the console)
 	const handleRestart = () => setConsoleOutput('Restart clicked');
+
+	useEffect(() => {
+		const unlisten = listen('serial-data', (event) => {
+			setConsoleOutput((prev) => `${prev}\n${event.payload}`);
+		});
+
+		return () => {
+			unlisten.then((fn) => fn());
+		};
+	}, []);
 
 	return (
 		<div style={{ width: '100%', position: 'absolute', bottom: '30px', textAlign: 'center' }}>
