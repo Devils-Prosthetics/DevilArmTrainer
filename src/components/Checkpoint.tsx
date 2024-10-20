@@ -14,7 +14,7 @@ type Point = {
 	value: number
 }
 
-export const Checkpoint = (props: any) => {
+export const Checkpoint = ({className, ...props}: {className?: string}) => {
 	const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);	// State to track selected data point
 
 	// Handle dot click (select a data point)
@@ -23,45 +23,41 @@ export const Checkpoint = (props: any) => {
 	};
 
 	return (
-		<div {...props}>
+		<div {...props} className={`flex justify-center items-center ${className}`}>
 			{/* Table with Line Graph */}
-			<div>
-				<table border="1" style={{ width: '100%' }}>
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>Value</th>
+			<table className="bg-pink-950 p-4 rounded-xl border-separate border-spacing-x-5 whitespace-nowrap">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+				<tbody>
+					{sampleData.map((data, index) => (
+						<tr key={index}>
+							<td className="text-center">{data.name}</td>
+							<td className="text-center">{data.value}</td>
 						</tr>
-					</thead>
-				</table>
-				<div style={{ maxHeight: '120px', overflowY: 'auto' }}>
-					<table border="1" style={{ width: '100%' }}>
-						<tbody>
-							{sampleData.map((data, index) => (
-								<tr key={index}>
-									<td>{data.name}</td>
-									<td>{data.value}</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
+					))}
+				</tbody>
+			</table>
 
+			<div className='flex flex-col w-full justify-center items-center'>
 				{/* Line Graph with Dots */}
-				<div style={{ marginTop: '20px' }}>
-					<svg width="100%" height="100">
+				<div>
+					<svg className='w-full h-full' viewBox='0 0 410 100' >
 						{/* Line */}
 						<polyline
 							fill="none"
 							stroke="white"
 							strokeWidth="3"
-							points={sampleData.map((data, index) => `${index * 100},${100 - data.value}`).join(' ')}
+							points={sampleData.map((data, index) => `${index * 100 + 5},${100 - data.value}`).join(' ')}
 						/>
 						{/* Dots on the Line Graph */}
 						{sampleData.map((data, index) => (
 							<circle
 								key={index}
-								cx={index * 100}	// Positioning x based on index
+								cx={index * 100 + 5}	// Positioning x based on index
 								cy={100 - data.value}	// Positioning y based on value
 								r="5"
 								fill={selectedPoint === data ? 'red' : 'white'}	/* Selected point in red */
@@ -73,29 +69,17 @@ export const Checkpoint = (props: any) => {
 						))}
 					</svg>
 				</div>
-			</div>
 
-			{/* Rectangle with Text - Display Selected Data */}
-			<div
-				style={{
-					marginTop: '20px',
-					padding: '10px',
-					height: '100px',
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					color: 'white',
-					border: '1px solid black',
-					backgroundColor: '#565656'
-				}}
-			>
-				<span>
-					{selectedPoint ? `Selected: ${selectedPoint.name} - Value: ${selectedPoint.value}` : 'No data point selected'}
-				</span>
-			</div>
+				{/* Rectangle with Text - Display Selected Data */}
+				<div>
+					<span>
+						{selectedPoint ? `Selected: ${selectedPoint.name} - Value: ${selectedPoint.value}` : 'No data point selected'}
+					</span>
+				</div>
 
-			{/* Load Model Button */}
-			<button style={{ marginTop: '20px' }}>Load Model</button>
+				{/* Load Model Button */}
+				<button>Load Model</button>
+			</div>
 		</div>
 	);
 }

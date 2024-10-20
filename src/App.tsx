@@ -9,18 +9,17 @@ import { Checkpoint } from './components/Checkpoint';
 const App = () => {
 
 	return (
-		<div style={{ display: 'flex', height: '100vh' }}>
-			<Logo />
-
-			{/* Left Section */}
-			<Checkpoint />
-
-			{/* Right Section */}
-			<FileSelector style={{ width: '50%', padding: '0px' }} />
-
-			<Terminal />
+		<>
+			<div className='flex flex-col justify-center items-center p-10 h-full'>
+				<Logo size={'100'} />
+				<div className='flex py-3 space-x-3'>
+					<Checkpoint className='bg-pink-900 rounded-xl p-3 w-full' />
+					<FileSelector className='bg-pink-900 rounded-xl p-3' />
+				</div>
+				<Terminal className='bg-pink-900 rounded-xl p-3 h-full w-full' />
+			</div>
 			<ToastContainer />
-		</div>
+		</>
 	);
 };
 

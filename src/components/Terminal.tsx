@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { useEffect, useState } from "react";
 
-export const Terminal = () => {
+export const Terminal = (props: any) => {
 	const [consoleOutput, setConsoleOutput] = useState('Console output will appear here.');
 
 	// Handle Start and Restart buttons
@@ -31,25 +31,13 @@ export const Terminal = () => {
 	}, []);
 
 	return (
-		<div style={{ width: '100%', position: 'absolute', bottom: '30px', textAlign: 'center' }}>
-			<div
-				style={{
-					margin: '20px auto',
-					width: '95%',
-					height: '200px',
-					border: '1px solid black',
-					padding: '10px',
-					overflowY: 'scroll',
-					color: 'white',
-					backgroundColor: '#565656',
-					textAlign: 'left'
-				}}
-			>
+		<div {...props}>
+			<div>
 				{consoleOutput.split('\n').map((line, index) => {
 					return (<span key={index}>{line}</span>)
 				})}
 			</div>
-			<button onClick={handleRestart} style={{ marginRight: '10px' }}>
+			<button onClick={handleRestart}>
 				Restart
 			</button>
 			<button onClick={handleStart}>Start</button>

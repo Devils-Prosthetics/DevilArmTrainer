@@ -42,7 +42,7 @@ export const FileSelector = (props: any) => {
 	return (
 		<div {...props}>
 			{/* Display Folder Contents */}
-			<div style={{ marginTop: '20px', height: '150px', overflowY: 'scroll', border: '1px solid black', backgroundColor: '#565656' }}>
+			<div>
 				<ul>
 					{folderContent.map((file, index) => (
 						<li key={index}>{file}</li>
@@ -51,10 +51,10 @@ export const FileSelector = (props: any) => {
 			</div>
 
 			{/* New and Load Buttons */}
-			<div style={{ marginTop: '20px' }}>
+			<div>
 				{/* Folder Selection Box */}
 				<button onClick={handleFileUpload}>Upload to Raspberry Pi</button>
-				<input type="file" webkitdirectory="true" onChange={handleFolderSelect} />
+				<input type="file" onChange={handleFolderSelect} />
 			</div>
 		</div>
 	);
