@@ -1,9 +1,13 @@
 import { invoke } from "@tauri-apps/api/core";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { Button } from "./Button";
+import { InputFile } from "./InputFile";
+import { useConsoleStore } from "../stores/console";
 
 export const FileSelector = (props: any) => {
 	const [folderContent, setFolderContent] = useState<string[]>([]);
+	const consoleAdd = useConsoleStore((state) => state.add);
 
 	// Function to handle folder selection
 	const handleFolderSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,8 +35,8 @@ export const FileSelector = (props: any) => {
 
 				console.log(response);
 			} catch (error) {
-				console.error(`Error: ${error}`);
-				toast(`Error: ${error}`);
+				`${error}`.split('\n').forEach(consoleAdd)
+				toast(`Failed to upload`);
 			}
 		};
 		reader.readAsArrayBuffer(file);
@@ -51,10 +55,10 @@ export const FileSelector = (props: any) => {
 			</div>
 
 			{/* New and Load Buttons */}
-			<div>
+			<div className="flex flex-col justify-center items-center">
 				{/* Folder Selection Box */}
-				<button onClick={handleFileUpload}>Upload to Raspberry Pi</button>
-				<input type="file" onChange={handleFolderSelect} />
+				<Button onClick={handleFileUpload}>Upload to Raspberry Pi</Button>
+				<InputFile onChange={handleFolderSelect} className="mt-2" />
 			</div>
 		</div>
 	);

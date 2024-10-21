@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "./Button";
 
 // Sample data for table and line graph
 const sampleData: Point[] = [
@@ -42,7 +43,7 @@ export const Checkpoint = ({className, ...props}: {className?: string}) => {
 				</tbody>
 			</table>
 
-			<div className='flex flex-col w-full justify-center items-center'>
+			<div className='flex flex-col w-full justify-center items-center mx-2'>
 				{/* Line Graph with Dots */}
 				<div>
 					<svg className='w-full h-full' viewBox='0 0 410 100' >
@@ -78,7 +79,7 @@ export const Checkpoint = ({className, ...props}: {className?: string}) => {
 				</div>
 
 				{/* Load Model Button */}
-				<button>Load Model</button>
+				<Button>Load Model</Button>
 			</div>
 		</div>
 	);
