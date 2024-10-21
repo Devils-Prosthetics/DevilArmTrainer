@@ -11,11 +11,8 @@ use std::time::Duration;
 mod serial;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
 
+// Starts the serial connection in a new thread.
 #[tauri::command]
 fn serial_start(port: String) -> bool {
     let port_clone = port.clone();
@@ -29,17 +26,19 @@ fn serial_start(port: String) -> bool {
     true // Return true to signal thread was spawned successfully
 }
 
-
+// Stops the serial connection
 #[tauri::command]
 fn serial_stop() -> bool {
     serial::stop()
 }
 
+// Here for reference
 #[tauri::command]
 fn download(app: AppHandle, serial_data: String) {
     app.emit("serial-output", &serial_data).unwrap();
 }
 
+// Runs the DevilArm project, will eventually just take a path as input
 #[tauri::command]
 fn upload_file_to_pi() -> Result<String, String> {
     // Specify the directory where you want to run the cargo command
@@ -65,19 +64,21 @@ fn upload_file_to_pi() -> Result<String, String> {
     }
 }
 
+// Enables other functions to use app handler, notably serial
 pub static GLOBAL_APP_HANDLE: OnceCell<AppHandle> = OnceCell::new();
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .setup(move |app| {
+            // Set the global app handler once in setup.
             GLOBAL_APP_HANDLE.set(app.handle().clone())
                 .expect("Failed to set global app handle");
             
             Ok(())
         })
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![greet, serial_start, serial_stop, upload_file_to_pi])
+        .invoke_handler(tauri::generate_handler![serial_start, serial_stop, upload_file_to_pi])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

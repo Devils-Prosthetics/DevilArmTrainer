@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 
+// Creates a store to hold the Console's output
 interface ConsoleState {
 	output: string[],
 	clear: () => void,
@@ -7,6 +8,7 @@ interface ConsoleState {
 	set: (output: string[]) => void,
 }
 
+// Defines all of the functions for the store
 export const useConsoleStore = create<ConsoleState>((set) => ({
 	output: ['Console output will show up here'],
 	set: (output: string[]) => set({ output }),

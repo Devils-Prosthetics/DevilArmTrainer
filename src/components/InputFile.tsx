@@ -1,5 +1,6 @@
 import { Button } from "./Button";
 
+// Creates an input file button
 export const InputFile = ({className, onChange}: {className?: string, onChange: React.ChangeEventHandler<HTMLInputElement>}) => {
 	return (
 		<div className={className}>

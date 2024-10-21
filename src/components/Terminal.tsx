@@ -24,11 +24,13 @@ export const Terminal = ({className, ...props}: {className: string}) => {
 	const handleRestart = () => consoleState.set(['Restart clicked']);
 
 	useEffect(() => {
+		// Add in any serial-data events that are called from rust to the console
 		const unlisten = listen('serial-data', (event) => {
 			consoleState.add(event.payload as string);
 		});
 
 		return () => {
+			// remove the listener on  unmount
 			unlisten.then((fn) => fn());
 		};
 	}, []);
@@ -45,6 +47,7 @@ export const Terminal = ({className, ...props}: {className: string}) => {
 			</div>
 			<div className="overflow-y-scroll h-full">
 				{consoleState.output.map((line, index) => {
+					// Output each line as a div.
 					return (<div key={index}>{line}</div>)
 				})}
 			</div>

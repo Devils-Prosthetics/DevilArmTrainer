@@ -2,6 +2,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLElement> {
 	makeDiv?: boolean
 }
 
+// A button component, just gives consistent styling
 export const Button = ({className, children, makeDiv, ...props}: ButtonProps) => {
 	if (makeDiv == false) {
 		return (

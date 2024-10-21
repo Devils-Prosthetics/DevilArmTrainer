@@ -6,8 +6,8 @@ import { Logo } from './components/Logo';
 import { FileSelector } from './components/FileSelector';
 import { Checkpoint } from './components/Checkpoint';
 
+// Displays the app
 const App = () => {
-
 	return (
 		<>
 			<div className='flex flex-col justify-center items-center p-10 h-screen'>

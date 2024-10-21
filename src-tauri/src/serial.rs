@@ -23,6 +23,7 @@ impl Serial {
 }
 
 // Starting serial port connection
+// Should be part of struct
 pub fn start(port: &str) -> bool {
     let port = serialport::new("/dev/ttyACM0", 115_200)
         .timeout(Duration::from_millis(10))
@@ -57,6 +58,9 @@ pub fn start(port: &str) -> bool {
         std::thread::sleep(Duration::from_millis(10));
     }
 }
+
+// This should actually be part of a struct and drop the current connection
+// will be implemented in the future
 pub fn stop() -> bool {
     true
 }
